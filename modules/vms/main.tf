@@ -1,18 +1,18 @@
-# data "azurerm_resource_group" "resource_group" {
-#   name     = var.resource_group_name
-#   location = var.resource_group_location
-# }
 resource "azurerm_public_ip" "public_ip" {
   name                = var.public_ip_name
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  # sku                 = "Standard"
+  # routing_preference  = "Internet"
 }
 
 resource "azurerm_network_interface" "network_interface" {
   name                = var.network_interface
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
+
+
 
   ip_configuration {
     name                          = "internal"
@@ -23,6 +23,11 @@ resource "azurerm_network_interface" "network_interface" {
   }
 }
 
+# resource "azurerm_network_interface_security_group_association" "nsg01" {
+#   network_interface_id      = azurerm_network_interface.network_interface.id
+#   network_security_group_id = azurerm_network_security_group.hubnsg01.id
+# }
+
 resource "azurerm_linux_virtual_machine" "ubuntu_linux_server" { # reference name in terrafom
   name                = var.vm_name
   resource_group_name = var.resource_group_name
@@ -31,12 +36,13 @@ resource "azurerm_linux_virtual_machine" "ubuntu_linux_server" { # reference nam
   admin_username      = var.username
   network_interface_ids = [
     azurerm_network_interface.network_interface.id,
+
   ]
   disable_password_authentication = true
 
   admin_ssh_key {
     username   = var.username
-    public_key = file("C:/Users/koush/.ssh/id_rsa.pub")
+    public_key = file("C:/Users/DELL/.ssh/id_rsa.pub")
   }
 
   os_disk {

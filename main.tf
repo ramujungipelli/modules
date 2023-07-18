@@ -26,6 +26,12 @@ module "resource_group" {
   resource_group_location = var.resource_group_location
 }
 
+module "resource_group1" {
+  source                  = "./modules/resource_group"
+  resource_group_name     = "spokerg01"
+  resource_group_location = "westus"
+}
+
 module "vnets" {
   source                  = "./modules/vnets"
   resource_group_name     = module.resource_group.resource_group_name
@@ -40,7 +46,7 @@ module "vnets" {
 
 module "vms" {
   source                  = "./modules/vms"
-  count                   = length(var.vm_name)
+  count                   = length(var.vm_name)  #2
   resource_group_name     = module.resource_group.resource_group_name
   resource_group_location = module.resource_group.resource_group_location
   nsg_name                = module.vnets.nsg_name
